@@ -13,6 +13,7 @@ async function bootstrap() {
   const configSwagger = new DocumentBuilder()
     .setTitle('Tasks API')
     .setDescription('API for managing tasks')
+    .addBearerAuth() // Enable Bearer authentication
     .setVersion('1.0')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, configSwagger);

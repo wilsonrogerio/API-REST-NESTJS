@@ -1,17 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/app/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUSerDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { HashingServiceProtocol } from 'src/auth/hash/hashing-service';
 import { PayloadTokenDto } from 'src/auth/dto/payload-token.dto';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises'
+import { ResponseCreateUserDto, ResponseImageUploadUserDto, ResponseUpdateUserDto, ResponseUserDto } from './dto/response-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private Prisma: PrismaService, private readonly HashService: HashingServiceProtocol) { }
 
-  async getOne(userId: number) {
+  //Buscar Usuario pelo id
+  async getOne(userId: number): Promise<ResponseUserDto> {
     try {
       const user = await this.Prisma.user.findFirst({
         where: { id: userId },
@@ -29,7 +31,8 @@ export class UsersService {
     }
   }
 
-  async createUser(userData: CreateUserDto) {
+  //Criar Usuario
+  async createUser(userData: CreateUserDto): Promise<ResponseCreateUserDto> {
     try {
       const passwordHash = await this.HashService.hash(userData.password)
       const user = await this.Prisma.user.create({
@@ -43,7 +46,8 @@ export class UsersService {
     }
   }
 
-  async updateUser(userId: number, userData: UpdateUSerDto, userPayload: PayloadTokenDto) {
+  //Atualizar Usuario
+  async updateUser(userId: number, userData: UpdateUserDto, userPayload: PayloadTokenDto): Promise<ResponseUpdateUserDto> {
     try {
       const user = await this.Prisma.user.findFirst({
         where: { id: userId }
@@ -84,6 +88,7 @@ export class UsersService {
     }
   }
 
+  //Deletar Usuario
   async deleteUser(userId: number, userPayload: PayloadTokenDto) {
     try {
       const user = await this.Prisma.user.findFirst({
@@ -104,7 +109,8 @@ export class UsersService {
     }
   }
 
-  async uploadUserImage(userPayload: PayloadTokenDto, file: Express.Multer.File) {
+  //Metodo para upload de imagem do usuario
+  async uploadUserImage(userPayload: PayloadTokenDto, file: Express.Multer.File): Promise<ResponseImageUploadUserDto> {
     try {
       //extrai o formato da imagem - ex .jpg , .png
       const extensionName = path.extname(file.originalname).toLowerCase().substring(1);

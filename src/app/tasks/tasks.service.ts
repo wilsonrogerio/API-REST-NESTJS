@@ -10,13 +10,13 @@ import { ResponseTaskDto } from './dto/reponse-task.dto';
 export class TasksService {
   constructor(private prisma: PrismaService) { }
   // Busca todas as tasks
-  async getAll(paramsPagination: PaginationDto): Promise<ResponseTaskDto[]> {
-    // Desestruturação dos parametros de paginação
-    const { limit = 10, offset = 0 } = paramsPagination;
+  async getAll(): Promise<ResponseTaskDto[]> {
+    // // Desestruturação dos parametros de paginação
+    // const { limit = 10, offset = 0 } = paramsPagination;
 
     const allTasks = await this.prisma.task.findMany({
-      take: limit,
-      skip: offset,
+      // take: limit,
+      // skip: offset,
       orderBy: {//ordena da forma descresent
         createAt: "desc"
       }
